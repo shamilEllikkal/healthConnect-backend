@@ -40,7 +40,7 @@ speciality:{
     price: {
         type:String
     }
-
+ 
 })
 
 export default mongoose.model("doctor",doctorSchema)

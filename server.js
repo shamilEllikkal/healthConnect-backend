@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import cors from "cors";
 import Routers from "./routes/Routers.js"
+
+
 dotenv.config();
 connectDB();
 
@@ -14,10 +16,10 @@ const PORT = process.env.PORT;
 
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 app.use("/api",Routers)
-app.use('/uploads',express.static('uploads'));
+
 
 
 server.listen(PORT,()=>{

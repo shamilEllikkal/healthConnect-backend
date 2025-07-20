@@ -22,7 +22,7 @@ export const registerUser = asyncHanlder(async (req, res) => {
     name,
     email,
     password: hashedPassword,
-    profilePicture: req.file ? req.file.path : "defaultprofile.jpg",
+    profilePicture: req.file ? req.file.path : "",
   });
   res.status(201).json({
     _id: newUser._id,
@@ -85,7 +85,7 @@ console.log(userData.email,"hello")
 
 export const getUserProfile = asyncHanlder(async (req, res) => {
   const userId = req.params.id;
-  const userProfile = await User.findById(userId);
+  const userProfile = await User.findById(userId).select("-password");
   if (!userProfile) {
     return res.status(404);
     throw new Error("User not found");

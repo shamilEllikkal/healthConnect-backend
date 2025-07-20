@@ -8,7 +8,7 @@ export const createDoctor = asyncHandler(async (req, res) => {
     experience,
     hospital,
     doctor_phone,
-    availability,
+    availability,price
   } = req.body;
   if (
     !doctor ||
