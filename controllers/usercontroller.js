@@ -47,7 +47,7 @@ export const loginUser = asyncHanlder(async (req, res) => {
     return res.status(400).json({ message: "Invalid email" });
   }
   const userData = await User.findOne({ email });
-console.log(userData.email,"hello")
+
   if (!userData) {
     return res
       .status(400)
@@ -64,7 +64,7 @@ console.log(userData.email,"hello")
         },
       },
       process.env.JWT_SECRET,
-      { expiresIn: "10m" }
+      { expiresIn: "1d" }
     );
     return res.status(200).json({
       accessToken,
