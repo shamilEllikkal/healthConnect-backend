@@ -83,6 +83,52 @@ export const loginUser = asyncHanlder(async (req, res) => {
   
 });
 
+export const googleUser = asyncHanlder(async (req, res) => {
+  const { email } = req.body;
+  //check role
+
+  //check if all fields are provided
+  if (!email) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  
+  const userData = await User.findOne({ email });
+
+  if (!userData) {
+    return res
+      .status(400)
+      .json({ message: "User not found signup first or invalid credentials" });
+  }
+  if (userData){
+    const accessToken = jwt.sign(
+      {
+        user: {
+          name: userData.name,
+          email: userData.email,
+          id: userData.id,
+          role: userData.role,
+        },
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+    return res.status(200).json({
+      accessToken,
+      user: {
+        name: userData.name,
+        email: userData.email,
+        id: userData.id,
+        role: userData.role,
+        profile:userData.profilePicture
+      },
+    });
+  } else {
+    res.status(401);
+    throw new Error("Email is not valid");
+  }
+  
+});
+
 export const getUserProfile = asyncHanlder(async (req, res) => {
   const userId = req.params.id;
   const userProfile = await User.findById(userId).select("-password");
