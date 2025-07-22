@@ -33,7 +33,7 @@ export const registerUser = asyncHanlder(async (req, res) => {
   });
 });
 
-export const RegisterUser = asyncHanlder(async (req, res) => {
+export const googleRegisterUser = asyncHanlder(async (req, res) => {
   const { name, email } = req.body;
   if (!name || !email) {
     return res.status(400).json({ message: "All fields are required" });
