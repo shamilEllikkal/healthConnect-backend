@@ -44,10 +44,10 @@ export const googleRegisterUser = asyncHanlder(async (req, res) => {
     const accessToken = jwt.sign(
       {
         user: {
-          name: userData.name,
-          email: userData.email,
-          id: userData.id,
-          role: userData.role,
+          name: existingUser.name,
+          email: existingUser.email,
+          id: existingUser.id,
+          role: existingUser.role,
         },
       },
       process.env.JWT_SECRET,
@@ -56,11 +56,11 @@ export const googleRegisterUser = asyncHanlder(async (req, res) => {
      return res.status(200).json({
       accessToken,
       user: {
-        name: userData.name,
-        email: userData.email,
-        id: userData.id,
-        role: userData.role,
-        profile:userData.profilePicture
+        name: existingUser.name,
+        email: existingUser.email,
+        id: existingUser.id,
+        role: existingUser.role,
+        profile:existingUser.profilePicture
       },
     })
   }
