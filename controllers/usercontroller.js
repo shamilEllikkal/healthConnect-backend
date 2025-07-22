@@ -33,6 +33,52 @@ export const registerUser = asyncHanlder(async (req, res) => {
   });
 });
 
+export const googleRegisterUser = asyncHanlder(async (req, res) => {
+  const { name, email } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  // Check if user already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    const accessToken = jwt.sign(
+      {
+        user: {
+          name: userData.name,
+          email: userData.email,
+          id: userData.id,
+          role: userData.role,
+        },
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    )
+     return res.status(200).json({
+      accessToken,
+      user: {
+        name: userData.name,
+        email: userData.email,
+        id: userData.id,
+        role: userData.role,
+        profile:userData.profilePicture
+      },
+    })
+  }
+  //create new user
+  const newUser = await User.create({
+    name,
+    email,
+    profilePicture: req.file ? req.file.path : "",
+  });
+  res.status(201).json({
+    _id: newUser._id,
+    name: newUser.name,
+    email: newUser.email,
+    profilePicture: newUser.profilePicture,
+    role: newUser.role,
+  });
+});
+
 export const loginUser = asyncHanlder(async (req, res) => {
   const { email, password } = req.body;
   //check role
