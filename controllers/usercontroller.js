@@ -35,49 +35,74 @@ export const registerUser = asyncHanlder(async (req, res) => {
 
 export const googleRegisterUser = asyncHanlder(async (req, res) => {
   const { name, email } = req.body;
+
   if (!name || !email) {
     return res.status(400).json({ message: "All fields are required" });
   }
+
   // Check if user already exists
   const existingUser = await User.findOne({ email });
+
   if (existingUser) {
     const accessToken = jwt.sign(
       {
         user: {
+          id: existingUser._id,
           name: existingUser.name,
           email: existingUser.email,
-          id: existingUser.id,
           role: existingUser.role,
         },
       },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
-    )
-     return res.status(200).json({
+    );
+
+    return res.status(200).json({
       accessToken,
       user: {
+        id: existingUser._id,
         name: existingUser.name,
         email: existingUser.email,
-        id: existingUser.id,
         role: existingUser.role,
-        profile:existingUser.profilePicture
+        profile: existingUser.profilePicture,
       },
-    })
+    });
   }
-  //create new user
+
+  // Create new user
   const newUser = await User.create({
     name,
     email,
     profilePicture: req.file ? req.file.path : "",
+    authProvider: "google", //store this for future checks
   });
-  res.status(201).json({
-    _id: newUser._id,
-    name: newUser.name,
-    email: newUser.email,
-    profilePicture: newUser.profilePicture,
-    role: newUser.role,
+
+  // Generate JWT for new user
+  const accessToken = jwt.sign(
+    {
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+
+  return res.status(201).json({
+    accessToken,
+    user: {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+      profile: newUser.profilePicture,
+    },
   });
 });
+
 
 export const loginUser = asyncHanlder(async (req, res) => {
   const { email, password } = req.body;
