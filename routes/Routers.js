@@ -13,7 +13,7 @@ const router = express.Router();
 router.post("/auth/register",registerUser);
 router.post("/auth/login",loginUser);
 router.post("/auth/google",googleUser);
-router.post("/auth/googleRegister",googleRegisterUser);
+router.post("/auth/google-register",googleRegisterUser);
 
 // router.post("/auth/refresh",refreshHandler)
 
