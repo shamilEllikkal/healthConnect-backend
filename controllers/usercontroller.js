@@ -33,77 +33,6 @@ export const registerUser = asyncHanlder(async (req, res) => {
   });
 });
 
-export const googleRegisterUser = asyncHanlder(async (req, res) => {
-  const { name, email } = req.body;
-
-  if (!name || !email) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
-  // Check if user already exists
-  const existingUser = await User.findOne({ email });
-
-  if (existingUser) {
-    const accessToken = jwt.sign(
-      {
-        user: {
-          id: existingUser._id,
-          name: existingUser.name,
-          email: existingUser.email,
-          role: existingUser.role,
-        },
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-
-    return res.status(200).json({
-      accessToken,
-      user: {
-        id: existingUser._id,
-        name: existingUser.name,
-        email: existingUser.email,
-        role: existingUser.role,
-        profile: existingUser.profilePicture,
-      },
-    });
-  }
-
-  // Create new user
-  const newUser = await User.create({
-    name,
-    email,
-    profilePicture: req.file ? req.file.path : "",
-    authProvider: "google", //store this for future checks
-  });
-
-  // Generate JWT for new user
-  const accessToken = jwt.sign(
-    {
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-      },
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: "1d" }
-  );
-
-  return res.status(201).json({
-    accessToken,
-    user: {
-      id: newUser._id,
-      name: newUser.name,
-      email: newUser.email,
-      role: newUser.role,
-      profile: newUser.profilePicture,
-    },
-  });
-});
-
-
 export const loginUser = asyncHanlder(async (req, res) => {
   const { email, password } = req.body;
   //check role
@@ -125,53 +54,6 @@ export const loginUser = asyncHanlder(async (req, res) => {
       .json({ message: "User not found signup first or invalid credentials" });
   }
   if (userData && (await bcrypt.compare(password, userData.password))) {
-    const accessToken = jwt.sign(
-      {
-        user: {
-          name: userData.name,
-          email: userData.email,
-          id: userData.id,
-          role: userData.role,
-        },
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-    return res.status(200).json({
-      accessToken,
-      user: {
-        name: userData.name,
-        email: userData.email,
-        id: userData.id,
-        role: userData.role,
-        profile:userData.profilePicture
-      },
-    });
-  } else {
-    res.status(401);
-    throw new Error("Email is not valid");
-  }
-  
-});
-
-export const googleUser = asyncHanlder(async (req, res) => {
- 
-  const { email } = req.body;
-  //check role
-
-  //check if all fields are provided
-  if (!email) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-  
-  const userData = await User.findOne({ email });
-
-  if (!userData) {
-    return res
-      .status(400)
-      .json({ message: "User not found signup first or invalid credentials" });
-  }
-  if (userData){
     const accessToken = jwt.sign(
       {
         user: {
