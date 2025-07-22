@@ -130,6 +130,7 @@ export const loginUser = asyncHanlder(async (req, res) => {
 });
 
 export const googleUser = asyncHanlder(async (req, res) => {
+ 
   const { email } = req.body;
   //check role
 
