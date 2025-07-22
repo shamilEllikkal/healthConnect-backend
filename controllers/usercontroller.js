@@ -33,19 +33,36 @@ export const registerUser = asyncHanlder(async (req, res) => {
   });
 });
 
-export const googleRegisterUser = asyncHanlder(async (req, res) => {
+export const RegisterUser = asyncHanlder(async (req, res) => {
   const { name, email } = req.body;
-  console.log(name,email,"hi")
   if (!name || !email) {
     return res.status(400).json({ message: "All fields are required" });
   }
   // Check if user already exists
   const existingUser = await User.findOne({ email });
   if (existingUser) {
- const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    return res.status(400).json({ message: "User already exists" });
-  }
+    const accessToken = jwt.sign(
+      {
+        user: {
+          name: userData.name,
+          email: userData.email,
+          id: userData.id,
+          role: userData.role,
+        },
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    )
+     return res.status(200).json({
+      accessToken,
+      user: {
+        name: userData.name,
+        email: userData.email,
+        id: userData.id,
+        role: userData.role,
+        profile:userData.profilePicture
+      },
+    })
   }
   //create new user
   const newUser = await User.create({
