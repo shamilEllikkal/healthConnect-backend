@@ -5,6 +5,7 @@ import {createAppointment, getAppointments,getAllAppointments} from '../controll
 import  { isAdmin } from "../middlewares/adminVerify.js"
 import { createHospital,updateHospital,deleteHospital, getHospitals } from '../controllers/hospitalController.js';
 import { createDoctor,deleteDoctor,getDoctors,updateDoctor } from '../controllers/doctorController.js';
+import razorpay from '../config/razorpay.js';
 
 
 const router = express.Router();
@@ -21,6 +22,21 @@ router.use(validateToken)
 //user profile router
 router.get("/user/profile/:id",getUserProfile);
 router.patch("/user/update/:id",updateUserProfile);
+
+router.post("/create-order", async (req, res) => {
+  try {
+    const options = {
+      amount: req.body.amount * 100, // ₹50 => 5000 paise
+      currency: "INR",
+      receipt: "order_rcptid_" + Date.now(),
+    };
+
+    const order = await razorpay.orders.create(options);
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create order" });
+  }
+});
 
 //apointment router
 router.post("/appointments/book",createAppointment)
