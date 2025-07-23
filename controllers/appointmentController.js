@@ -22,7 +22,7 @@ if(existingAppointment){
         user_id: req.user.id
     });
     res.status(201).json({
-      newAppointment,msg:"appointment created",
+      newAppointment,msg:"appointment created Successfully",
     })
   
 })
