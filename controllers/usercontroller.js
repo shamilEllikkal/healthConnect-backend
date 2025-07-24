@@ -41,7 +41,7 @@ export const loginUser = asyncHanlder(async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
-  
+
   //check if email is valid
   if (!email.includes("@")) {
     return res.status(400).json({ message: "Invalid email" });
@@ -73,24 +73,92 @@ export const loginUser = asyncHanlder(async (req, res) => {
         email: userData.email,
         id: userData.id,
         role: userData.role,
-        profile:userData.profilePicture
+        profile: userData.profilePicture,
       },
     });
   } else {
     res.status(401);
     throw new Error("Email is not valid");
   }
-  
 });
 
 export const getUserProfile = asyncHanlder(async (req, res) => {
   const userId = req.params.id;
   const userProfile = await User.findById(userId).select("-password");
   if (!userProfile) {
-    return res.status(404);
-    throw new Error("User not found");
+    return res.status(404).json({ message: "User not found" });
   }
   res.status(200).json(userProfile);
+});
+
+export const googleUser = asyncHanlder(async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const existingUser = await User.findOne({ email });
+
+  if (existingUser && (await bcrypt.compare(password, existingUser.password))) {
+    const accessToken = jwt.sign(
+      {
+        user: {
+          name: existingUser.name,
+          email: existingUser.email,
+          id: existingUser._id,
+          role: existingUser.role,
+        },
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+    return res.status(200).json({
+      accessToken,
+      user: {
+        name: existingUser.name,
+        email: existingUser.email,
+        id: existingUser.id,
+        role: existingUser.role,
+        profile: existingUser.profilePicture,
+      },
+    });
+  } else {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    //create new user
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      profilePicture: req.file ? req.file.path : "",
+    });
+
+    if (newUser && (await bcrypt.compare(password, newUser.password))) {
+      const accessToken = jwt.sign(
+        {
+          user: {
+            name: newUser.name,
+            email: newUser.email,
+            id: newUser._id,
+            role: newUser.role,
+          },
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+      return res.status(200).json({
+        accessToken,
+        user: {
+          name: newUser.name,
+          email: newUser.email,
+          id: newUser._id,
+          role: newUser.role,
+          profile: newUser.profilePicture,
+        },
+      });
+    }
+  }
 });
 
 export const updateUserProfile = asyncHanlder(async (req, res) => {
@@ -100,19 +168,18 @@ export const updateUserProfile = asyncHanlder(async (req, res) => {
     throw new Error("there is no existing user");
   }
 
- const {phone} = req.body;
+  const { phone } = req.body;
 
-
-const updatedUser = await User.findByIdAndUpdate(req.params.id,req.body,{
-    new:true,
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  res.status(200).json(updatedUser);
 });
-    res.status(200).json(updatedUser)
-});
 
-export const getUsers = asyncHanlder(async(req,res)=>{
-  const userList = await User.find({role:{$ne:"admin"}})
-  if(!userList){
-    res.status(400).json({msg:"there is no users"})
+export const getUsers = asyncHanlder(async (req, res) => {
+  const userList = await User.find({ role: { $ne: "admin" } });
+  if (!userList) {
+    res.status(400).json({ msg: "there is no users" });
   }
-  res.status(200).json(userList)
-})
+  res.status(200).json(userList);
+});
