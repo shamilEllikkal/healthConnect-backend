@@ -64,10 +64,23 @@ export const loginUser = asyncHanlder(async (req, res) => {
         },
       },
       process.env.JWT_SECRET,
+      { expiresIn: "10m" }
+    );
+      const refreshToken = jwt.sign(
+      {
+        user: {
+          name: userData.name,
+          email: userData.email,
+          id: userData.id,
+          role: userData.role,
+        },
+      },
+      process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
     return res.status(200).json({
       accessToken,
+      refreshToken,
       user: {
         name: userData.name,
         email: userData.email,
@@ -147,8 +160,21 @@ export const googleUser = asyncHanlder(async (req, res) => {
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
+          const refreshToken = jwt.sign(
+      {
+        user: {
+          name: userData.name,
+          email: userData.email,
+          id: userData.id,
+          role: userData.role,
+        },
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
       return res.status(200).json({
         accessToken,
+        refreshToken,
         user: {
           name: newUser.name,
           email: newUser.email,
@@ -183,3 +209,23 @@ export const getUsers = asyncHanlder(async (req, res) => {
   }
   res.status(200).json(userList);
 });
+
+
+
+export const refreshAccessToken = (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) return res.status(401).json({ message: "Missing token" });
+
+  jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, decoded) => {
+    if (err) return res.status(403).json({ message: "Invalid refresh token" });
+
+    const newAccessToken = jwt.sign(
+      { user: { id: decoded.id } },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    return res.json({ accessToken: newAccessToken });
+  });
+};

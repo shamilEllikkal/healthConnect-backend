@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser,getUserProfile,updateUserProfile, getUsers,googleUser } from '../controllers/usercontroller.js';
+import { registerUser, loginUser,getUserProfile,updateUserProfile, getUsers,googleUser,refreshAccessToken } from '../controllers/usercontroller.js';
 import validateToken from "../middlewares/validateTokenHandler.js"
 import {createAppointment, getAppointments,getAllAppointments} from '../controllers/appointmentController.js';
 import  { isAdmin } from "../middlewares/adminVerify.js"
@@ -14,8 +14,7 @@ const router = express.Router();
 router.post("/auth/register",registerUser);
 router.post("/auth/login",loginUser);
 router.post("/auth/google",googleUser);
-
-// router.post("/auth/refresh",refreshHandler)
+router.post("/auth/refresh",refreshAccessToken)
 
 router.use(validateToken)
 
