@@ -118,6 +118,7 @@ export const googleUser = asyncHanlder(async (req, res) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser && (await bcrypt.compare(password, existingUser.password))) {
+
     const accessToken = jwt.sign(
       {
         user: {
@@ -167,10 +168,10 @@ export const googleUser = asyncHanlder(async (req, res) => {
       const refreshToken = jwt.sign(
         {
           user: {
-            name: userData.name,
-            email: userData.email,
-            id: userData.id,
-            role: userData.role,
+            name: newUser.name,
+            email: newUser.email,
+            id: newUser.id,
+            role: newUser.role,
           },
         },
         process.env.JWT_SECRET,
