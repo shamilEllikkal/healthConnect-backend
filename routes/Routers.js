@@ -6,7 +6,7 @@ import  { isAdmin } from "../middlewares/adminVerify.js"
 import { createHospital,updateHospital,deleteHospital, getHospitals } from '../controllers/hospitalController.js';
 import { createDoctor,deleteDoctor,getDoctors,updateDoctor } from '../controllers/doctorController.js';
 import razorpay from '../config/razorpay.js';
-import { resetPassword } from 'better-auth/api';
+
 
 
 const router = express.Router();
@@ -16,7 +16,7 @@ router.post("/auth/register",registerUser);
 router.post("/auth/login",loginUser);
 router.post("/auth/google",googleUser);
 router.post("/auth/refresh",refreshAccessToken)
-router.post("/auth/forgot-password",forgotPassword);
+router.post("/auth/forgotpassword",forgotPassword);
 router.post("/auth/verifyotp",verifyOtp);
 router.patch("/auth/resetpassword",resetPass);
 

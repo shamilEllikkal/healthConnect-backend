@@ -94,8 +94,7 @@ export const loginUser = asyncHanlder(async (req, res) => {
       },
     });
   } else {
-    res.status(401);
-    throw new Error("Email is not valid");
+    res.status(400).json({ message: "Invalid credentials" });
   }
 });
 
