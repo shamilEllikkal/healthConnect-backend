@@ -56,7 +56,7 @@ export const updateDoctor = asyncHandler(async (req, res) => {
 
 
 export const deleteDoctor = asyncHandler(async(req,res)=>{
-    const doctor = await Doctor.findOneAndDelete( {_id:req.params.id,user_id:req.user.id});
+    const doctor = await Doctor.findOneAndDelete({_id:req.params.id});
 
 if(!doctor){
     res.status(400).json({msg:'doctor not found'})
