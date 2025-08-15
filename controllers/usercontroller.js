@@ -48,7 +48,7 @@ export const loginUser = asyncHanlder(async (req, res) => {
 
   //check if email is valid
   if (!email.includes("@")) {
-    return res.status(400).json({ message: "Invalid email" });
+    return res.status(400).json({ message: "Invalid email" });  
   }
   const userData = await User.findOne({ email });
 
