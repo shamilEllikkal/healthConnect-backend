@@ -68,7 +68,7 @@ export const loginUser = asyncHanlder(async (req, res) => {
         },
       },
       process.env.JWT_SECRET,
-      { expiresIn: "10m" }
+      { expiresIn: "1d" }
     );
     const refreshToken = jwt.sign(
       {
@@ -225,7 +225,7 @@ export const refreshAccessToken = asyncHanlder((req, res) => {
     const newAccessToken = jwt.sign(
       { user: { id: decoded.id } },
       process.env.JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "1d" }
     );
 
     return res.json({ accessToken: newAccessToken });
