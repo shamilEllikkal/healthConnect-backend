@@ -11,7 +11,7 @@ speciality:{
         required:true
     },
     experience:{
-        type:String,
+        type:Number,
         required:true
     },
     hospital:{
