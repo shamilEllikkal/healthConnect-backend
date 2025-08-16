@@ -59,7 +59,7 @@ export const updateHospital = asyncHandler(async (req, res) => {
 });
 
 export const deleteHospital = asyncHandler(async(req,res)=>{
-    const hospital = await Hospital.findOneAndDelete( {_id:req.params.id,user_id:req.user.id});
+    const hospital = await Hospital.findOneAndDelete( {_id:req.params.id});
 
 if(!hospital){
     res.status(400).json({msg:'hospital not found'})
