@@ -16,11 +16,11 @@ const hospitalSchema = mongoose.Schema({
         required:true
     },
     bed:{
-        type:String,
-        required:true
-    },
-    departments:{
-        type:String,
+            type:Number,
+            required:true
+        },
+        departments:{
+            type:Number,
         required:true
     },
     hospital_email:{

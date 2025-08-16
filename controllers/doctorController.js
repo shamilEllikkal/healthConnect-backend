@@ -8,7 +8,8 @@ export const createDoctor = asyncHandler(async (req, res) => {
     experience,
     hospital,
     doctor_phone,
-    availability,price
+    availability,
+    price,
   } = req.body;
   if (
     !doctor ||
@@ -54,22 +55,20 @@ export const updateDoctor = asyncHandler(async (req, res) => {
   res.status(200).json(newDoctor);
 });
 
+export const deleteDoctor = asyncHandler(async (req, res) => {
+  const doctor = await Doctor.findOneAndDelete({ _id: req.params.id });
 
-export const deleteDoctor = asyncHandler(async(req,res)=>{
-    const doctor = await Doctor.findOneAndDelete({_id:req.params.id});
+  if (!doctor) {
+    res.status(400).json({ msg: "doctor not found" });
+  }
+  res.status(200).json({ msg: "doctor deleted" });
+});
 
-if(!doctor){
-    res.status(400).json({msg:'doctor not found'})
-}
-  res.status(200).json({msg:"doctor deleted"})
-})
-
-
-export const getDoctors = asyncHandler(async(req,res)=>{
-    const doctorList = await Doctor.find()
-    if(!doctorList){
-        res.status(400).json({msg:'there is no doctors'})
-    }
-    // console.log(doctorList.role) 
-    res.status(200).json(doctorList)
-})
+export const getDoctors = asyncHandler(async (req, res) => {
+  const doctorList = await Doctor.find();
+  if (!doctorList) {
+    res.status(400).json({ msg: "there is no doctors" });
+  }
+  // console.log(doctorList.role)
+  res.status(200).json(doctorList);
+});
