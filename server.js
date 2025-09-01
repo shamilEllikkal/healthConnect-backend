@@ -17,7 +17,7 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://healthconnectbookingapp.netlify.app'],
+  origin: ['https://healthconnectadmin.netlify.app', 'https://healthconnectbookingapp.netlify.app'],
   credentials: true,
 }));
 

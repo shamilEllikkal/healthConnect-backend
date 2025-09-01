@@ -12,7 +12,7 @@ export const createHospital = asyncHandler(async (req, res) => {
     user_id,
   } = req.body;
   if (
-    !hospital ||
+    !  ||
     !type ||
     !bed ||
     !departments ||
